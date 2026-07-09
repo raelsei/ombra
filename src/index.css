@@ -1,0 +1,149 @@
+/* ===================================================================
+   OMBRA — global tokens, base, keyframes, responsive collapse.
+   Layout is fluid (clamp / auto-fit); the few breakpoints below mirror
+   the prototype's width-based collapse (rails + secondary chrome hide,
+   Lookbook/House grids drop to one column, status bar tightens).
+   =================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  /* reactive state — driven from the single rAF loop (useFilmStage) */
+  --mx: 0.5; /* figure centroid X (0–1)   */
+  --my: 0.5; /* figure centroid Y (0–1)   */
+  --mp: 0; /* figure presence (0–1)     */
+  --p: 0; /* scroll progress (0–1)     */
+  --instr: 1; /* instruments on/off        */
+  --grain: 1; /* film grain on/off         */
+  --live: #a9b4c0; /* cold accent               */
+
+  --bone: #ece6da;
+}
+
+html {
+  background: #000;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: var(--bone);
+  font-family: 'Space Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--bone);
+  color: #000;
+}
+
+a {
+  color: var(--bone);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: var(--live);
+}
+
+:focus-visible {
+  outline: 1px solid var(--live);
+  outline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* -------- keyframes -------- */
+@keyframes rmBlink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.12;
+  }
+}
+@keyframes rmPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes rmDrop {
+  0% {
+    transform: translateY(-100%);
+  }
+  45% {
+    transform: translateY(220%);
+  }
+  100% {
+    transform: translateY(220%);
+  }
+}
+
+/* -------- responsive collapse (no-JS, matches prototype breakpoints) -------- */
+
+/* < 900px — hide rotated side rails */
+@media (max-width: 899px) {
+  #rail-l,
+  #rail-r {
+    display: none !important;
+  }
+}
+
+/* < 760px — Lookbook + House grids drop to a single column */
+@media (max-width: 759px) {
+  #lookgrid {
+    grid-template-columns: 1fr !important;
+  }
+  #lookgrid > figure {
+    grid-column: auto !important;
+    margin: 0 !important;
+  }
+  #housegrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* < 620px — hide nav links + figure readout, tighten the status bar */
+@media (max-width: 619px) {
+  #topnav,
+  #stat-figure {
+    display: none !important;
+  }
+  #statusbar {
+    font-size: 9px !important;
+    letter-spacing: 0.16em !important;
+  }
+}
+
+/* -------- reduced motion — kill CSS transitions/animations globally -------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* no travelling negative pocket when motion is reduced (static heading
+     difference-blends stay) */
+  #negative-lens {
+    display: none !important;
+  }
+}
