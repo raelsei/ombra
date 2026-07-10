@@ -26,7 +26,7 @@ export function House() {
       data-screen-label="House"
       style={{
         position: 'relative',
-        padding: 'clamp(120px,16vh,200px) clamp(40px,7vw,120px)',
+        padding: 'clamp(120px,16vh,200px) clamp(20px,6.5vw,120px)',
         background:
           'linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.84) 14%, rgba(0,0,0,.84) 86%, rgba(0,0,0,.35))',
       }}

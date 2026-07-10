@@ -22,11 +22,15 @@
   --live: #a9b4c0; /* cold accent               */
 
   --bone: #ece6da;
+
+  --frame: 14px; /* inset registration frame  */
+  --tick: 22px; /* corner tick offset        */
 }
 
 html {
   background: #000;
   scroll-behavior: smooth;
+  overflow-x: clip; /* fixed film/glow layers scale past 100vw — clip the bleed */
 }
 
 body {
@@ -202,8 +206,12 @@ img {
   }
 }
 
-/* < 620px — hide nav links + figure readout, tighten the status bar */
+/* < 620px — hide nav links + figure readout, tighten the status bar + frame */
 @media (max-width: 619px) {
+  :root {
+    --frame: 7px;
+    --tick: 12px;
+  }
   #topnav,
   #stat-figure {
     display: none !important;
@@ -211,6 +219,11 @@ img {
   #statusbar {
     font-size: 9px !important;
     letter-spacing: 0.16em !important;
+  }
+  /* tighter chrome so the couture canvas keeps its air on a phone */
+  header {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
   }
 }
 

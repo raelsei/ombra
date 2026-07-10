@@ -28,7 +28,7 @@ export function FooterSection() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: 'clamp(100px,13vh,150px) clamp(40px,7vw,120px) 84px',
+        padding: 'clamp(100px,13vh,150px) clamp(20px,6.5vw,120px) 84px',
         background: 'linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.9) 42%)',
       }}
     >
@@ -75,10 +75,10 @@ export function FooterSection() {
               transition: `transform 1.2s ${EASE}`,
               fontFamily: "'Syne', sans-serif",
               fontWeight: 800,
-              fontSize: 'clamp(48px,12vw,178px)',
+              fontSize: 'clamp(42px,11.5vw,178px)',
               lineHeight: 0.9,
-              letterSpacing: '.04em',
-              paddingLeft: '.04em',
+              letterSpacing: '.02em',
+              paddingLeft: '.02em',
               color: '#ECE6DA',
               mixBlendMode: 'difference',
             }}
@@ -107,7 +107,8 @@ export function FooterSection() {
           aria-label="Footer"
           style={{
             display: 'flex',
-            gap: 'clamp(20px,2.4vw,34px)',
+            flexWrap: 'wrap',
+            gap: '14px clamp(18px,2.4vw,34px)',
             fontSize: '11px',
             letterSpacing: '.24em',
             textTransform: 'uppercase',

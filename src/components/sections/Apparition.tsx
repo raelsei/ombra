@@ -10,7 +10,7 @@ export function Apparition() {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        padding: '140px clamp(40px,7vw,120px)',
+        padding: '140px clamp(20px,6.5vw,120px)',
       }}
     >
       <div

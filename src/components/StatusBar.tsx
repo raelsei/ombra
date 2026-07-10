@@ -18,7 +18,7 @@ export function StatusBar() {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '20px',
-          padding: '16px clamp(36px,5vw,72px)',
+          padding: '16px clamp(18px,5vw,72px)',
           fontSize: '10px',
           letterSpacing: '.24em',
           textTransform: 'uppercase',

@@ -8,10 +8,10 @@ const tick = (corner: 'tl' | 'tr' | 'bl' | 'br'): CSSProperties => {
     width: '9px',
     height: '9px',
     pointerEvents: 'none',
-    top: corner[0] === 't' ? '22px' : undefined,
-    bottom: corner[0] === 'b' ? '22px' : undefined,
-    left: corner[1] === 'l' ? '22px' : undefined,
-    right: corner[1] === 'r' ? '22px' : undefined,
+    top: corner[0] === 't' ? 'var(--tick)' : undefined,
+    bottom: corner[0] === 'b' ? 'var(--tick)' : undefined,
+    left: corner[1] === 'l' ? 'var(--tick)' : undefined,
+    right: corner[1] === 'r' ? 'var(--tick)' : undefined,
     borderTop: corner[0] === 't' ? line : undefined,
     borderBottom: corner[0] === 'b' ? line : undefined,
     borderLeft: corner[1] === 'l' ? line : undefined,
@@ -40,7 +40,7 @@ export function Chrome() {
         aria-hidden="true"
         style={{
           position: 'fixed',
-          inset: '14px',
+          inset: 'var(--frame)',
           zIndex: 80,
           border: '1px solid rgba(236,230,218,.10)',
           pointerEvents: 'none',

@@ -12,7 +12,7 @@ export function Lookbook() {
       data-screen-label="Lookbook"
       style={{
         position: 'relative',
-        padding: 'clamp(120px,16vh,200px) clamp(40px,7vw,120px)',
+        padding: 'clamp(120px,16vh,200px) clamp(20px,6.5vw,120px)',
       }}
     >
       <GhostIndex n="02" side="left" />

@@ -19,7 +19,7 @@ export function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '120px clamp(40px,7vw,120px) 140px',
+        padding: '120px clamp(20px,6.5vw,120px) 140px',
       }}
     >
       <div

@@ -16,7 +16,7 @@ export function Nav() {
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
         gap: '24px',
-        padding: '28px clamp(36px,5vw,72px)',
+        padding: '28px clamp(18px,5vw,72px)',
         textShadow: '0 1px 14px rgba(0,0,0,.75)',
       }}
     >

@@ -12,7 +12,7 @@ export function Collection() {
       data-screen-label="Collection"
       style={{
         position: 'relative',
-        padding: 'clamp(120px,16vh,200px) clamp(40px,7vw,120px)',
+        padding: 'clamp(120px,16vh,200px) clamp(20px,6.5vw,120px)',
         background:
           'linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.86) 12%, rgba(0,0,0,.86) 88%, rgba(0,0,0,.35))',
       }}
