@@ -53,6 +53,13 @@ updates — no per-node listeners, no layout thrash.
   toward it (`0.2` lerp); the nearest frame is cover-fit drawn to the canvas, and
   only when the rounded index changes. The figure centroid is read from the
   build-time lookup in `frames-meta.json`.
+- **Apparition trail (the scroll signature).** While scrolling, the canvas is
+  dimmed each frame by a velocity-dependent black veil and the current frame is
+  stamped with `lighten`, so the bright figure smears into fading ghosts of
+  itself — the faster you scroll, the longer the trail. At rest the ghosts
+  dissolve in under a second and a single clean silhouette remains; the stage
+  scale "breathes" (1.04→1.06) with the same velocity. Tuning lives in
+  `useFilmStage.ts` (`velNorm` divisor 48, veil `0.26 − 0.2·heat`).
 - **Smooth drift.** The `<video>` plays natively; scroll velocity ramps
   `playbackRate` (`+` up to ~3.4×, `0.06` lerp) and eases back to idle
   (`baseSpeed`, default 0.5×). No seeking. Centroid is sampled live from a 48×27

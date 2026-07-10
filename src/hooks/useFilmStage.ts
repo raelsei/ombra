@@ -90,6 +90,8 @@ export function useFilmStage(opts: Opts) {
     let rate: number | null = null
     let floatFrame = 0
     let lastIdx = -1
+    let trailHeat = 0
+    let lastScale = 1.04
     let disposed = false
 
     // --- cover-fit canvas ---
@@ -263,10 +265,36 @@ export function useFilmStage(opts: Opts) {
         const fTarget = progress * (FRAME_COUNT - 1)
         floatFrame = lerp(floatFrame, fTarget, 0.2)
         const idx = clamp(Math.round(floatFrame), 0, FRAME_COUNT - 1)
-        if (idx !== lastIdx) {
-          const img = images[idx]
+        const img = images[idx]
+
+        // APPARITION TRAIL — the signature. Scroll velocity smears the figure
+        // into fading ghosts of itself: each frame the canvas is dimmed by a
+        // velocity-dependent veil (fast scroll → thin veil → long trail), then
+        // the current frame is stamped with `lighten` so only the bright figure
+        // accumulates. At rest the ghosts dissolve in under a second and one
+        // clean silhouette remains — the garment cut for the shape left behind.
+        const velNorm = Math.min(1, scrollVel / 48)
+        trailHeat = Math.max(velNorm, trailHeat * 0.94)
+        if (trailHeat > 0.02) {
+          ctx.globalCompositeOperation = 'source-over'
+          ctx.fillStyle = `rgba(0,0,0,${(0.26 - 0.2 * trailHeat).toFixed(3)})`
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          if (img && img.naturalWidth) {
+            ctx.globalCompositeOperation = 'lighten'
+            drawImageCover(img)
+            ctx.globalCompositeOperation = 'source-over'
+          }
+          lastIdx = -1 // force one clean stamp once the trail settles
+        } else if (idx !== lastIdx) {
           if (img && img.naturalWidth) drawImageCover(img)
           lastIdx = idx
+        }
+
+        // stage breathing — the frame inhales slightly while the figure moves
+        const scale = 1.04 + trailHeat * 0.02
+        if (Math.abs(scale - lastScale) > 0.0005) {
+          canvas.style.transform = `scale(${scale.toFixed(4)})`
+          lastScale = scale
         }
         curTime = progress * DURATION
         const c = CENTROIDS[idx]
