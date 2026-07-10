@@ -33,7 +33,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
     width: '100%',
     height: '100%',
     filter: FILM_FILTER,
-    transform: 'scale(1.04)',
+    transform: 'translateX(var(--film-x)) scale(var(--film-scale))',
     pointerEvents: 'none',
     zIndex: 1,
   }
@@ -79,7 +79,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
           mixBlendMode: 'screen',
           opacity: 'calc(0.5 * var(--film-fade))',
           filter: 'blur(clamp(28px,4vw,56px)) brightness(0.9) saturate(0) sepia(0.35)',
-          transform: 'scale(1.08)',
+          transform: 'translateX(var(--film-x)) scale(1.08)',
         }}
       />
 

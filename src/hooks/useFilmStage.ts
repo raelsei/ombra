@@ -87,15 +87,21 @@ export function useFilmStage(opts: Opts) {
     // the content sections read clean and undistracted. Keyed to the collection's
     // live viewport position → resize-proof.
     const collectionEl = document.getElementById('collection')
+    const smooth = (t: number) => t * t * (3 - 2 * t)
     const writeFilmFade = () => {
-      let fade = 1
+      const vh = window.innerHeight || 1
+      const vw = window.innerWidth || 1
+      // APPEAR — invisible at the very top, softly fades in over the first ~0.6
+      // screen of scroll while sliding in from beyond the right edge.
+      const fadeIn = smooth(clamp(window.scrollY / (vh * 0.6), 0, 1))
+      // LEAVE — fades back out as the Collection rises into view (resize-proof).
+      let fadeOut = 1
       if (collectionEl) {
-        const vh = window.innerHeight || 1
         const top = collectionEl.getBoundingClientRect().top
-        // top ≥ 1.3vh (far below) → 1;  top ≤ 0.4vh (arriving) → 0
-        fade = clamp((top - vh * 0.4) / (vh * 0.9), 0, 1)
+        fadeOut = clamp((top - vh * 0.4) / (vh * 0.9), 0, 1)
       }
-      root.style.setProperty('--film-fade', fade.toFixed(3))
+      root.style.setProperty('--film-fade', Math.min(fadeIn, fadeOut).toFixed(3))
+      root.style.setProperty('--film-x', ((1 - fadeIn) * vw * 0.11).toFixed(1) + 'px')
     }
 
     // --- reactive state ---
@@ -341,7 +347,7 @@ export function useFilmStage(opts: Opts) {
         // stage breathing — the frame inhales slightly while the figure moves
         const scale = 1.04 + trailHeat * 0.02
         if (Math.abs(scale - lastScale) > 0.0005) {
-          canvas.style.transform = `scale(${scale.toFixed(4)})`
+          root.style.setProperty('--film-scale', scale.toFixed(4))
           lastScale = scale
         }
         curTime = progress * DURATION
