@@ -8,3 +8,6 @@ dist-ssr
 # verification artifacts (Playwright screenshots)
 .playwright-mcp/
 /*.jpeg
+
+# TS build info
+*.tsbuildinfo
