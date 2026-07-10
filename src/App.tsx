@@ -37,6 +37,7 @@ export default function App() {
 
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const glowRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // style config → CSS vars
@@ -53,6 +54,7 @@ export default function App() {
     reduced,
     showFigureData: cfg.showFigureData,
     canvasRef,
+    glowRef,
     videoRef,
     onReady: () => setReady(true),
   })
@@ -62,7 +64,7 @@ export default function App() {
 
   return (
     <div ref={rootRef} id="top" style={{ position: 'relative', width: '100%' }}>
-      <FilmStage canvasRef={canvasRef} videoRef={videoRef} mode={cfg.motion} />
+      <FilmStage canvasRef={canvasRef} glowRef={glowRef} videoRef={videoRef} mode={cfg.motion} />
       <Chrome />
       <Nav />
       <StatusBar />

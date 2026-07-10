@@ -80,6 +80,7 @@ export function FooterSection() {
               letterSpacing: '.04em',
               paddingLeft: '.04em',
               color: '#ECE6DA',
+              mixBlendMode: 'difference',
             }}
           >
             OMBRA

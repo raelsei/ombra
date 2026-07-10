@@ -22,6 +22,8 @@ interface Opts {
   /** live ref — read inside the loop without re-initialising */
   showFigureData: boolean
   canvasRef: RefObject<HTMLCanvasElement | null>
+  /** blurred screen-blend copy above the content — "light seeping through" */
+  glowRef: RefObject<HTMLCanvasElement | null>
   videoRef: RefObject<HTMLVideoElement | null>
   onReady: () => void
 }
@@ -50,7 +52,7 @@ const mmss = (s: number) => {
  * reduced-motion — freeze on a still frame, no rAF; chrome updates on scroll only.
  */
 export function useFilmStage(opts: Opts) {
-  const { mode, baseSpeed, reduced, canvasRef, videoRef, onReady } = opts
+  const { mode, baseSpeed, reduced, canvasRef, glowRef, videoRef, onReady } = opts
 
   // read-only refs so config that shouldn't re-init the loop stays fresh
   const showFigRef = useRef(opts.showFigureData)
@@ -94,23 +96,37 @@ export function useFilmStage(opts: Opts) {
     let lastScale = 1.04
     let disposed = false
 
-    // --- cover-fit canvas ---
+    // --- cover-fit canvases (main + blurred glow copy) ---
     const dpr = Math.min(2, window.devicePixelRatio || 1)
+    const glow = glowRef.current
+    const gctx = glow ? glow.getContext('2d') : null
     let curImg: HTMLImageElement | null = null
     const sizeCanvas = () => {
       canvas.width = Math.round(window.innerWidth * dpr)
       canvas.height = Math.round(window.innerHeight * dpr)
+      if (glow) {
+        // quarter-res is plenty — the CSS blur erases any detail anyway
+        glow.width = Math.round(window.innerWidth * 0.5)
+        glow.height = Math.round(window.innerHeight * 0.5)
+      }
+    }
+    const drawCoverTo = (
+      c: CanvasRenderingContext2D,
+      w: number,
+      h: number,
+      src: HTMLImageElement | HTMLVideoElement,
+      sw: number,
+      sh: number,
+    ) => {
+      if (!sw || !sh) return
+      const s = Math.max(w / sw, h / sh)
+      c.drawImage(src, (w - sw * s) / 2, (h - sh * s) / 2, sw * s, sh * s)
     }
     const drawImageCover = (img: HTMLImageElement) => {
-      const cw = canvas.width,
-        ch = canvas.height
-      const iw = img.naturalWidth,
-        ih = img.naturalHeight
-      if (!iw || !ih) return
-      const s = Math.max(cw / iw, ch / ih)
-      const dw = iw * s,
-        dh = ih * s
-      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh)
+      drawCoverTo(ctx, canvas.width, canvas.height, img, img.naturalWidth, img.naturalHeight)
+      // glow always gets a plain stamp (no trail compositing) — the light that
+      // seeps through the content follows the figure, not its ghosts
+      if (gctx && glow) drawCoverTo(gctx, glow.width, glow.height, img, img.naturalWidth, img.naturalHeight)
       curImg = img
     }
     sizeCanvas()
@@ -313,6 +329,8 @@ export function useFilmStage(opts: Opts) {
             /* noop */
           }
           curTime = video.currentTime || 0
+          if (gctx && glow && video.videoWidth)
+            drawCoverTo(gctx, glow.width, glow.height, video, video.videoWidth, video.videoHeight)
           // live luminance centroid
           if (sctx && video.videoWidth) {
             try {

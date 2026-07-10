@@ -3,6 +3,7 @@ import type { Motion } from '../hooks/useFilmStage'
 
 interface Props {
   canvasRef: RefObject<HTMLCanvasElement | null>
+  glowRef: RefObject<HTMLCanvasElement | null>
   videoRef: RefObject<HTMLVideoElement | null>
   mode: Motion
 }
@@ -10,26 +11,22 @@ interface Props {
 const BASE = import.meta.env.BASE_URL
 
 // contrast crushes compression noise in the blacks so the footage's black
-// background reads as true 0 (under `difference` = "no change"). brightness +
-// opacity soften the figure off pure-white, and a touch of sepia warms it toward
-// the bone palette so it sits in the theme rather than glaring white.
-const FILM_FILTER = 'contrast(1.06) brightness(0.78) saturate(0) sepia(0.3) opacity(0.62)'
+// background merges with the page. brightness + opacity soften the figure off
+// pure-white, and a touch of sepia warms it toward the bone palette so it sits
+// in the theme rather than glaring white.
+const FILM_FILTER = 'contrast(1.08) brightness(0.82) saturate(0) sepia(0.3) opacity(0.78)'
 
 /**
- * The film composited OVER the content with `mix-blend-mode: difference`.
+ * The film as a fixed BACKDROP (z-index 1, beneath <main> at z3): the figure
+ * lives in the page's negative space, and the content's translucent panels and
+ * photography pass over it — the stage recedes, the collection leads.
  *
- * Because the ground is pure black:
- *  - over empty black areas the figure reads white (|white − black| = white) —
- *    the same "masked figure floats on black" look,
- *  - over any image, heading, caption or panel, the figure INVERTS it in the
- *    figure's own shape (a travelling negative) — exactly "the model turns what
- *    it passes over to opposite colours".
- *
- * It sits at z-index 5 (above <main> z3) but below the chrome (frame z80,
- * nav/status z100), so the fixed UI stays untouched and readable. A subtle
- * grain + vignette ride above it; there is no soft glow or tracking lens.
+ * The inversion signature survives at the typographic level: the big display
+ * headings carry `mix-blend-mode: difference`, so wherever the bright figure
+ * walks behind them the letters flip dark — a quiet echo of the negative
+ * instead of a full-page effect.
  */
-export function FilmStage({ canvasRef, videoRef, mode }: Props) {
+export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
   const filmLayer: React.CSSProperties = {
     position: 'fixed',
     inset: 0,
@@ -38,9 +35,8 @@ export function FilmStage({ canvasRef, videoRef, mode }: Props) {
     filter: FILM_FILTER,
     transform: 'scale(1.04)',
     transition: 'opacity .6s ease',
-    mixBlendMode: 'difference',
     pointerEvents: 'none',
-    zIndex: 5,
+    zIndex: 1,
   }
 
   return (
@@ -62,10 +58,31 @@ export function FilmStage({ canvasRef, videoRef, mode }: Props) {
         <source src={`${BASE}film.mp4`} type="video/mp4" />
       </video>
 
-      {/* grain + vignette ride above the film for cinematic texture (z6, below chrome) */}
+      {/* LIGHT SEEP — a blurred, screen-blended copy of the film ABOVE the
+          content (z4): where the figure walks behind a panel or a photograph,
+          its light bleeds through like a lamp behind fabric. Quarter-res canvas;
+          the heavy CSS blur does the diffusion. */}
+      <canvas
+        ref={glowRef}
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 4,
+          pointerEvents: 'none',
+          mixBlendMode: 'screen',
+          opacity: 0.5,
+          filter: 'blur(clamp(28px,4vw,56px)) brightness(0.9) saturate(0) sepia(0.35)',
+          transform: 'scale(1.08)',
+        }}
+      />
+
+      {/* grain + vignette ride above the film, below the content (z2) */}
       <div
         aria-hidden="true"
-        style={{ position: 'fixed', inset: 0, zIndex: 6, pointerEvents: 'none', overflow: 'hidden' }}
+        style={{ position: 'fixed', inset: 0, zIndex: 2, pointerEvents: 'none', overflow: 'hidden' }}
       >
         <div
           style={{

@@ -56,6 +56,7 @@ export function Apparition() {
               lineHeight: 0.9,
               letterSpacing: '-.035em',
               color: '#ECE6DA',
+              mixBlendMode: 'difference',
             }}
           >
             Silhouette

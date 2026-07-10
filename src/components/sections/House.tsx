@@ -85,6 +85,7 @@ export function House() {
               fontSize: 'clamp(32px,5vw,72px)',
               lineHeight: 1,
               letterSpacing: '-.02em',
+              mixBlendMode: 'difference',
             }}
           >
             The House

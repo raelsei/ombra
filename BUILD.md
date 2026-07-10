@@ -99,13 +99,13 @@ The 11 shipped images are AI-generated (Nano Banana Pro, regenerable) — see
 `IMAGE_MANIFEST.md` for the model, seeds, and per-slot prompts. Drop real studio
 photography over them anytime using the same filenames.
 
-## Figure-driven negative aesthetic
+## Figure as backdrop + typographic inversion
 
-As the tracked film figure moves, the areas it passes under invert:
-- The big section headings use `mix-blend-mode: difference`, so they flip to dark
-  where the bright figure passes behind them (`src/components/sections/*`).
-- A **figure-tracking negative lens** (`src/components/NegativeLens.tsx`, z-index 4)
-  is a soft `difference` ellipse centred on `--mx/--my`, gated by presence `--mp` —
-  a travelling "negative pocket" (black ground → white, pale figure → dark). It sits
-  above content but below the chrome, so nav/status stay readable. Disabled under
-  `prefers-reduced-motion` (headings' static blend stays).
+The film is a fixed backdrop (z1) beneath the content (z3): the figure lives in
+the page's negative space, ghosting through the sections' translucent panels,
+and the photography passes over it — the collection leads, the stage recedes.
+The inversion signature survives at the typographic level: the big display
+headings carry `mix-blend-mode: difference`, so wherever the bright figure walks
+behind them the letters flip dark (`src/components/sections/*`). The figure is
+graded soft (bone-tinted, `opacity 0.78`) so it reads as an apparition, not a
+subject.

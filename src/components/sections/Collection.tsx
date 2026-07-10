@@ -59,6 +59,7 @@ export function Collection() {
                 fontSize: 'clamp(38px,7vw,104px)',
                 lineHeight: 0.94,
                 letterSpacing: '-.02em',
+                mixBlendMode: 'difference',
               }}
             >
               Six Pieces
