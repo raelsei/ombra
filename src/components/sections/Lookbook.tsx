@@ -1,5 +1,6 @@
 import { LOOKS } from '../../data'
 import { ImageSlot } from '../ImageSlot'
+import { GhostIndex } from '../GhostIndex'
 
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
@@ -14,7 +15,8 @@ export function Lookbook() {
         padding: 'clamp(120px,16vh,200px) clamp(40px,7vw,120px)',
       }}
     >
-      <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
+      <GhostIndex n="02" side="left" />
+      <div style={{ position: 'relative', maxWidth: '1360px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '20px', marginBottom: 'clamp(48px,7vh,90px)' }}>
           <div
             data-reveal=""
@@ -60,9 +62,10 @@ export function Lookbook() {
             alignItems: 'start',
           }}
         >
-          {LOOKS.map((look) => (
+          {LOOKS.map((look, i) => (
             <figure
               key={look.id}
+              className="card"
               data-reveal=""
               style={{
                 opacity: 0,
@@ -74,10 +77,15 @@ export function Lookbook() {
                 margin: look.margin,
               }}
             >
-              <div style={{ position: 'relative', aspectRatio: look.ratio, background: '#0a0a0a', overflow: 'hidden' }}>
+              <div
+                className="well"
+                data-parallax={[0.06, 0.11, 0.08, 0.13][i]}
+                style={{ position: 'relative', aspectRatio: look.ratio, background: '#0a0a0a', overflow: 'hidden' }}
+              >
                 <ImageSlot id={look.id} alt={look.alt} placeholder={look.caption.split('·')[0].trim()} />
               </div>
               <figcaption
+                className="cap-dim"
                 style={{
                   marginTop: '14px',
                   fontSize: '10.5px',

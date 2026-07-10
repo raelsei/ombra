@@ -1,5 +1,6 @@
 import { HOUSE_SPECS, HOUSE_PORTRAIT_ALT } from '../../data'
 import { ImageSlot } from '../ImageSlot'
+import { GhostIndex } from '../GhostIndex'
 
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
@@ -30,9 +31,11 @@ export function House() {
           'linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.84) 14%, rgba(0,0,0,.84) 86%, rgba(0,0,0,.35))',
       }}
     >
+      <GhostIndex n="03" side="right" />
       <div
         id="housegrid"
         style={{
+          position: 'relative',
           maxWidth: '1240px',
           margin: '0 auto',
           display: 'grid',
@@ -50,7 +53,10 @@ export function House() {
             transition: `all 1.1s ${EASE}`,
           }}
         >
-          <div style={{ position: 'relative', aspectRatio: '3/4', background: '#0a0a0a', overflow: 'hidden' }}>
+          <div
+            className="well"
+            style={{ position: 'relative', aspectRatio: '3/4', background: '#0a0a0a', overflow: 'hidden' }}
+          >
             <ImageSlot id="rom-house-portrait" alt={HOUSE_PORTRAIT_ALT} placeholder="Campaign portrait" />
           </div>
         </div>

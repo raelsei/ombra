@@ -12,6 +12,10 @@ export interface CollectionItem {
   delay: number
   /** generation-prompt summary → alt text */
   alt: string
+  /** 12-col editorial placement */
+  gridColumn: string
+  /** vertical offset for the staggered baseline */
+  margin: string
 }
 
 export interface LookItem {
@@ -27,12 +31,12 @@ export interface LookItem {
 }
 
 export const COLLECTION: CollectionItem[] = [
-  { id: 'rom-piece-1', index: '01', name: 'Shroud Coat', material: 'Wool · Silence', delay: 0, alt: 'A floor-length draped wool coat swallowing the body, hood up, figure half-turned into shadow.' },
-  { id: 'rom-piece-2', index: '02', name: 'Second Skin', material: 'Bonded Jersey', delay: 0.07, alt: 'A bonded-jersey dress moulded to the torso, arms wrapped across the chest.' },
-  { id: 'rom-piece-3', index: '03', name: 'Void Trouser', material: 'Raw Silk', delay: 0.14, alt: 'Wide raw-silk trousers, bare torso cropped at the ribs, fabric catching a single light.' },
-  { id: 'rom-piece-4', index: '04', name: 'Relic Knit', material: 'Hand Loom', delay: 0.05, alt: 'An oversized hand-loomed knit unravelling at the hem, figure receding into black.' },
-  { id: 'rom-piece-5', index: '05', name: 'Membrane Shirt', material: 'Organza', delay: 0.12, alt: 'A translucent organza shirt, light passing through, shoulder and collarbone beneath.' },
-  { id: 'rom-piece-6', index: '06', name: 'Absence Gown', material: 'Cupro · Air', delay: 0.19, alt: 'A long cupro gown caught mid-movement, hem lifting, the body barely there.' },
+  { id: 'rom-piece-1', index: '01', name: 'Shroud Coat', material: 'Wool · Silence', delay: 0, alt: 'A floor-length draped wool coat swallowing the body, hood up, figure half-turned into shadow.', gridColumn: '1 / span 7', margin: '0' },
+  { id: 'rom-piece-2', index: '02', name: 'Second Skin', material: 'Bonded Jersey', delay: 0.08, alt: 'A bonded-jersey dress moulded to the torso, arms wrapped across the chest.', gridColumn: '9 / span 4', margin: 'clamp(90px,15vh,200px) 0 0' },
+  { id: 'rom-piece-3', index: '03', name: 'Void Trouser', material: 'Raw Silk', delay: 0.05, alt: 'Wide raw-silk trousers, bare torso cropped at the ribs, fabric catching a single light.', gridColumn: '2 / span 4', margin: 'clamp(40px,8vh,110px) 0 0' },
+  { id: 'rom-piece-4', index: '04', name: 'Relic Knit', material: 'Hand Loom', delay: 0.12, alt: 'An oversized hand-loomed knit unravelling at the hem, figure receding into black.', gridColumn: '7 / span 5', margin: 'clamp(120px,18vh,240px) 0 0' },
+  { id: 'rom-piece-5', index: '05', name: 'Membrane Shirt', material: 'Organza', delay: 0.06, alt: 'A translucent organza shirt, light passing through, shoulder and collarbone beneath.', gridColumn: '1 / span 5', margin: 'clamp(40px,8vh,110px) 0 0' },
+  { id: 'rom-piece-6', index: '06', name: 'Absence Gown', material: 'Cupro · Air', delay: 0.13, alt: 'A long cupro gown caught mid-movement, hem lifting, the body barely there.', gridColumn: '8 / span 4', margin: 'clamp(100px,16vh,210px) 0 0' },
 ]
 
 export const LOOKS: LookItem[] = [

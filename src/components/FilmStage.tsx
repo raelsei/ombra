@@ -85,6 +85,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
         style={{ position: 'fixed', inset: 0, zIndex: 2, pointerEvents: 'none', overflow: 'hidden' }}
       >
         <div
+          className="grainflicker"
           style={{
             position: 'absolute',
             inset: 0,

@@ -263,6 +263,25 @@ export function useFilmStage(opts: Opts) {
     }
     window.addEventListener('resize', onResize)
 
+    // depth pass — [data-parallax] media drifts at its own speed relative to
+    // the viewport centre. We subtract the already-applied translate before
+    // measuring so the fixed point is the untransformed layout position.
+    const plxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'))
+    const plxApplied = new WeakMap<HTMLElement, number>()
+    const parallaxPass = () => {
+      const vh = window.innerHeight
+      for (const el of plxEls) {
+        const speed = parseFloat(el.dataset.parallax || '0')
+        if (!speed) continue
+        const r = el.getBoundingClientRect()
+        const cur = plxApplied.get(el) || 0
+        const rawMid = r.top + r.height / 2 - cur
+        const target = -(rawMid - vh / 2) * speed
+        el.style.transform = `translateY(${target.toFixed(1)}px)`
+        plxApplied.set(el, target)
+      }
+    }
+
     const loop = () => {
       if (disposed) return
       readScroll()
@@ -370,6 +389,7 @@ export function useFilmStage(opts: Opts) {
       mp = lerp(mp, tp, 0.09)
 
       writeChrome(curTime)
+      parallaxPass()
       raf = requestAnimationFrame(loop)
     }
     let raf = requestAnimationFrame(loop)

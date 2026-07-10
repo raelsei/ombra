@@ -1,9 +1,10 @@
 import { COLLECTION } from '../../data'
 import { ImageSlot } from '../ImageSlot'
+import { GhostIndex } from '../GhostIndex'
 
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
-/** 02 · COLLECTION — "Six Objects". auto-fit grid of garment studies. */
+/** 02 · COLLECTION — "Six Pieces". 12-col editorial grid, staggered baselines. */
 export function Collection() {
   return (
     <section
@@ -16,7 +17,8 @@ export function Collection() {
           'linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.86) 12%, rgba(0,0,0,.86) 88%, rgba(0,0,0,.35))',
       }}
     >
-      <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
+      <GhostIndex n="01" side="right" />
+      <div style={{ position: 'relative', maxWidth: '1360px', margin: '0 auto' }}>
         <div
           style={{
             display: 'flex',
@@ -84,15 +86,18 @@ export function Collection() {
         </div>
 
         <div
+          id="collectiongrid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))',
+            gridTemplateColumns: 'repeat(12,1fr)',
             gap: 'clamp(22px,2.4vw,40px)',
+            alignItems: 'start',
           }}
         >
           {COLLECTION.map((item) => (
             <article
               key={item.id}
+              className="card"
               data-reveal=""
               style={{
                 opacity: 0,
@@ -100,9 +105,14 @@ export function Collection() {
                 filter: 'blur(6px)',
                 transition: `all 1s ${EASE}`,
                 transitionDelay: `${item.delay}s`,
+                gridColumn: item.gridColumn,
+                margin: item.margin,
               }}
             >
-              <div style={{ position: 'relative', aspectRatio: '3/4', background: '#0a0a0a', overflow: 'hidden' }}>
+              <div
+                className="well"
+                style={{ position: 'relative', aspectRatio: '3/4', background: '#0a0a0a', overflow: 'hidden' }}
+              >
                 <ImageSlot id={item.id} alt={`${item.name} — ${item.alt}`} placeholder={`Piece ${item.index}`} />
               </div>
               <div
@@ -119,7 +129,9 @@ export function Collection() {
                 <span style={{ color: 'rgba(236,230,218,.78)' }}>
                   {item.index} · {item.name}
                 </span>
-                <span style={{ color: 'rgba(236,230,218,.34)' }}>{item.material}</span>
+                <span className="cap-dim" style={{ color: 'rgba(236,230,218,.34)' }}>
+                  {item.material}
+                </span>
               </div>
             </article>
           ))}

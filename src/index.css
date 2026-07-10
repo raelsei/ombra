@@ -53,6 +53,87 @@ a:hover {
   color: var(--live);
 }
 
+/* -------- signature cursor — same language as the corner registration ticks */
+html,
+body {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13'%3E%3Cpath d='M6.5 0v13M0 6.5h13' stroke='%23ECE6DA' stroke-opacity='.85'/%3E%3C/svg%3E")
+      6 6,
+    auto;
+}
+a,
+button {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19'%3E%3Cpath d='M9.5 0v19M0 9.5h19' stroke='%23A9B4C0'/%3E%3Ccircle cx='9.5' cy='9.5' r='3' fill='none' stroke='%23A9B4C0'/%3E%3C/svg%3E")
+      9 9,
+    pointer;
+}
+
+/* -------- hover language -------- */
+/* media wells: slow couture zoom */
+.well img {
+  transition: transform 1.5s cubic-bezier(0.16, 0.84, 0.3, 1);
+  will-change: transform;
+}
+.card:hover .well img,
+.well:hover img {
+  transform: scale(1.045);
+}
+/* captions lift on card hover */
+.cap-dim {
+  transition: color 0.5s ease;
+}
+.card:hover .cap-dim {
+  color: rgba(236, 230, 218, 0.7) !important;
+}
+/* nav + footer links: hairline underline grows from the left */
+#topnav a,
+nav[aria-label='Footer'] a {
+  position: relative;
+}
+#topnav a::after,
+nav[aria-label='Footer'] a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 1px;
+  background: var(--live);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.16, 0.84, 0.3, 1);
+}
+#topnav a:hover::after,
+nav[aria-label='Footer'] a:hover::after {
+  transform: scaleX(1);
+}
+
+/* -------- living grain — jump-cut flicker like real film stock */
+@keyframes grainShift {
+  0% {
+    background-position: 0 0;
+  }
+  20% {
+    background-position: -28px 20px;
+  }
+  40% {
+    background-position: 16px -32px;
+  }
+  60% {
+    background-position: -40px -12px;
+  }
+  80% {
+    background-position: 32px 26px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+.grainflicker {
+  animation: grainShift 0.9s steps(1) infinite;
+}
+
 :focus-visible {
   outline: 1px solid var(--live);
   outline-offset: 3px;
@@ -105,12 +186,14 @@ img {
   }
 }
 
-/* < 760px — Lookbook + House grids drop to a single column */
+/* < 760px — Collection, Lookbook + House grids drop to a single column */
 @media (max-width: 759px) {
-  #lookgrid {
+  #lookgrid,
+  #collectiongrid {
     grid-template-columns: 1fr !important;
   }
-  #lookgrid > figure {
+  #lookgrid > figure,
+  #collectiongrid > article {
     grid-column: auto !important;
     margin: 0 !important;
   }
