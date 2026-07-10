@@ -82,6 +82,22 @@ export function useFilmStage(opts: Opts) {
     if (idxTot) idxTot.textContent = String(sections.length).padStart(2, '0')
     if (durEl) durEl.textContent = mmss(DURATION)
 
+    // The film lives in the opening. It stays fully visible through the hero and
+    // the Apparition beat, then fades out as the Collection rises into view so
+    // the content sections read clean and undistracted. Keyed to the collection's
+    // live viewport position → resize-proof.
+    const collectionEl = document.getElementById('collection')
+    const writeFilmFade = () => {
+      let fade = 1
+      if (collectionEl) {
+        const vh = window.innerHeight || 1
+        const top = collectionEl.getBoundingClientRect().top
+        // top ≥ 1.3vh (far below) → 1;  top ≤ 0.4vh (arriving) → 0
+        fade = clamp((top - vh * 0.4) / (vh * 0.9), 0, 1)
+      }
+      root.style.setProperty('--film-fade', fade.toFixed(3))
+    }
+
     // --- reactive state ---
     let mx = 0.5,
       my = 0.5,
@@ -205,6 +221,7 @@ export function useFilmStage(opts: Opts) {
       mp = c0[2]
       const onScroll = () => {
         readScroll()
+        writeFilmFade()
         writeChrome(progress * DURATION)
       }
       const onResize = () => {
@@ -230,14 +247,10 @@ export function useFilmStage(opts: Opts) {
     const sctx = sc.getContext('2d', { willReadFrequently: true })
 
     if (mode === 'scrub') {
-      canvas.style.opacity = '1'
-      if (video) video.style.opacity = '0'
       preloadAll()
     } else {
       // drift — the video is the visible layer
-      canvas.style.opacity = '0'
       if (video) {
-        video.style.opacity = '1'
         video.preload = 'auto'
         video.loop = true
         try {
@@ -389,6 +402,7 @@ export function useFilmStage(opts: Opts) {
       mp = lerp(mp, tp, 0.09)
 
       writeChrome(curTime)
+      writeFilmFade()
       parallaxPass()
       raf = requestAnimationFrame(loop)
     }

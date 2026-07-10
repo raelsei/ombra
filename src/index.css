@@ -25,6 +25,7 @@
 
   --frame: 14px; /* inset registration frame  */
   --tick: 22px; /* corner tick offset        */
+  --film-fade: 1; /* film visibility (1 hero → 0 as content arrives) */
 }
 
 html {

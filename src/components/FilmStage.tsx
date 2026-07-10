@@ -34,15 +34,19 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
     height: '100%',
     filter: FILM_FILTER,
     transform: 'scale(1.04)',
-    transition: 'opacity .6s ease',
     pointerEvents: 'none',
     zIndex: 1,
   }
 
   return (
     <>
-      {/* frame-scrub renderer */}
-      <canvas ref={canvasRef} aria-hidden="true" style={{ ...filmLayer, opacity: mode === 'scrub' ? 1 : 0 }} />
+      {/* frame-scrub renderer — visible only while the hero is on screen, then
+          faded out by --film-fade so the content sections read undistracted */}
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        style={{ ...filmLayer, opacity: mode === 'scrub' ? 'var(--film-fade)' : 0 }}
+      />
 
       {/* smooth-drift renderer */}
       <video
@@ -52,7 +56,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
         playsInline
         preload={mode === 'drift' ? 'auto' : 'none'}
         poster={`${BASE}film-poster.jpg`}
-        style={{ ...filmLayer, objectFit: 'cover', opacity: mode === 'drift' ? 1 : 0 }}
+        style={{ ...filmLayer, objectFit: 'cover', opacity: mode === 'drift' ? 'var(--film-fade)' : 0 }}
       >
         <source src={`${BASE}film.webm`} type="video/webm" />
         <source src={`${BASE}film.mp4`} type="video/mp4" />
@@ -73,7 +77,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
           zIndex: 4,
           pointerEvents: 'none',
           mixBlendMode: 'screen',
-          opacity: 0.5,
+          opacity: 'calc(0.5 * var(--film-fade))',
           filter: 'blur(clamp(28px,4vw,56px)) brightness(0.9) saturate(0) sepia(0.35)',
           transform: 'scale(1.08)',
         }}
