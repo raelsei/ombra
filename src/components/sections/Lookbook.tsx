@@ -28,7 +28,7 @@ export function Lookbook() {
               color: 'var(--live)',
             }}
           >
-            02 — Lookbook
+            02 · Lookbook
           </div>
           <h2
             data-reveal=""
@@ -44,7 +44,6 @@ export function Lookbook() {
               fontSize: 'clamp(38px,7vw,104px)',
               lineHeight: 0.94,
               letterSpacing: '-.02em',
-              mixBlendMode: 'difference',
             }}
           >
             In Motion
@@ -75,7 +74,7 @@ export function Lookbook() {
               }}
             >
               <div style={{ position: 'relative', aspectRatio: look.ratio, background: '#0a0a0a', overflow: 'hidden' }}>
-                <ImageSlot id={look.id} alt={look.alt} placeholder={look.caption.split('—')[0].trim()} />
+                <ImageSlot id={look.id} alt={look.alt} placeholder={look.caption.split('·')[0].trim()} />
               </div>
               <figcaption
                 style={{

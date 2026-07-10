@@ -56,14 +56,14 @@ export function Chrome() {
         aria-hidden="true"
         style={{ ...railBase, left: '20px', transform: 'translateY(-50%) rotate(180deg)' }}
       >
-        OMBRA — Conceptual Couture
+        Maison OMBRA · Antwerp / Paris
       </div>
       <div
         id="rail-r"
         aria-hidden="true"
         style={{ ...railBase, right: '20px', transform: 'translateY(-50%)' }}
       >
-        Apparition — Autumn·Winter 26
+        Apparition · Autumn·Winter 2026
       </div>
     </>
   )

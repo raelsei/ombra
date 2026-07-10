@@ -39,7 +39,7 @@ export function Apparition() {
             alignSelf: 'flex-start',
           }}
         >
-          A study in disappearance
+          Statement
         </div>
 
         <div style={{ overflow: 'hidden', alignSelf: 'stretch' }}>
@@ -52,14 +52,13 @@ export function Apparition() {
               transition: `transform 1.2s ${EASE}`,
               fontFamily: "'Syne', sans-serif",
               fontWeight: 800,
-              fontSize: 'clamp(52px,16vw,240px)',
-              lineHeight: 0.86,
+              fontSize: 'clamp(44px,9vw,132px)',
+              lineHeight: 0.9,
               letterSpacing: '-.035em',
               color: '#ECE6DA',
-              mixBlendMode: 'difference',
             }}
           >
-            Apparition
+            Silhouette
           </h2>
         </div>
 
@@ -79,7 +78,7 @@ export function Apparition() {
             color: 'rgba(236,230,218,.6)',
           }}
         >
-          Cut for the silhouette a figure leaves in a room once it has gone. Worn by no one. Seen by all.
+          Garments cut for the shape a figure leaves in a room once it has gone. Worn by no one, seen by all.
         </p>
       </div>
     </section>

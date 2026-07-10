@@ -69,7 +69,7 @@ export function House() {
               marginBottom: '22px',
             }}
           >
-            03 — The House
+            03 · The House
           </div>
           <h2
             data-reveal=""
@@ -85,18 +85,17 @@ export function House() {
               fontSize: 'clamp(32px,5vw,72px)',
               lineHeight: 1,
               letterSpacing: '-.02em',
-              mixBlendMode: 'difference',
             }}
           >
-            Light, and its absence.
+            The House
           </h2>
           <p data-reveal="" style={{ ...bodyPara('.12s'), margin: '0 0 22px' }}>
-            OMBRA is a study in disappearance. Each garment begins where the body ends — cut for the silhouette a
-            figure leaves in a room once it has gone.
+            OMBRA is a study in disappearance. Each garment begins where the body ends, cut for the shape a figure
+            leaves behind.
           </p>
           <p data-reveal="" style={{ ...bodyPara('.18s'), margin: '0 0 clamp(34px,5vh,54px)' }}>
-            The house works in a single palette. One collection a year, released in editions of few, photographed in
-            motion — never still.
+            A single palette. One collection a year, released in editions of few, photographed in motion, never at
+            rest.
           </p>
           <dl
             data-reveal=""

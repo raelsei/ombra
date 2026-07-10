@@ -3,7 +3,6 @@ import { useFilmStage, type Motion } from './hooks/useFilmStage'
 import { useReveals } from './hooks/useReveals'
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion'
 import { FilmStage } from './components/FilmStage'
-import { NegativeLens } from './components/NegativeLens'
 import { Chrome } from './components/Chrome'
 import { Nav } from './components/Nav'
 import { StatusBar } from './components/StatusBar'
@@ -64,7 +63,6 @@ export default function App() {
   return (
     <div ref={rootRef} id="top" style={{ position: 'relative', width: '100%' }}>
       <FilmStage canvasRef={canvasRef} videoRef={videoRef} mode={cfg.motion} />
-      <NegativeLens />
       <Chrome />
       <Nav />
       <StatusBar />

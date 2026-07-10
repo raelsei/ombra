@@ -141,9 +141,4 @@ img {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  /* no travelling negative pocket when motion is reduced (static heading
-     difference-blends stay) */
-  #negative-lens {
-    display: none !important;
-  }
 }

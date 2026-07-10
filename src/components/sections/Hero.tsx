@@ -63,7 +63,7 @@ export function Hero() {
           }}
         >
           <span style={{ width: '26px', height: '1px', background: 'var(--live)', display: 'inline-block' }} />
-          Conceptual Couture — Antwerp / Paris
+          Maison OMBRA · Antwerp / Paris
         </div>
 
         <h1
@@ -71,25 +71,20 @@ export function Hero() {
             margin: 0,
             fontFamily: "'Syne', sans-serif",
             fontWeight: 800,
-            fontSize: 'clamp(46px,11.5vw,172px)',
-            lineHeight: 0.9,
+            fontSize: 'clamp(40px,7.6vw,116px)',
+            lineHeight: 0.98,
             letterSpacing: '-.02em',
             color: '#ECE6DA',
           }}
         >
-          <span style={{ display: 'block', overflow: 'hidden' }}>
+          <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.14em', marginBottom: '-0.14em' }}>
             <span data-reveal="" style={maskLine('0s')}>
-              The Body
+              The Shape
             </span>
           </span>
-          <span style={{ display: 'block', overflow: 'hidden' }}>
+          <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.14em', marginBottom: '-0.14em' }}>
             <span data-reveal="" style={maskLine('.09s', 'rgba(236,230,218,.55)')}>
-              Is Only
-            </span>
-          </span>
-          <span style={{ display: 'block', overflow: 'hidden' }}>
-            <span data-reveal="" style={maskLine('.18s')}>
-              A Rumour
+              Remains
             </span>
           </span>
         </h1>
@@ -112,10 +107,10 @@ export function Hero() {
             color: 'rgba(236,230,218,.55)',
           }}
         >
-          <span>APPARITION</span>
-          <span style={{ color: 'rgba(236,230,218,.3)' }}>—</span>
           <span>Autumn·Winter 2026</span>
-          <span style={{ color: 'rgba(236,230,218,.3)' }}>—</span>
+          <span style={{ color: 'rgba(236,230,218,.3)' }}>·</span>
+          <span>Collection 01</span>
+          <span style={{ color: 'rgba(236,230,218,.3)' }}>·</span>
           <span>Edition of Few</span>
         </div>
       </div>
@@ -138,7 +133,7 @@ export function Hero() {
           color: 'rgba(236,230,218,.5)',
         }}
       >
-        <span>Scroll to summon</span>
+        <span>Scroll</span>
         <span style={{ width: '1px', height: '44px', background: 'linear-gradient(180deg, var(--live), transparent)' }} />
       </div>
     </section>

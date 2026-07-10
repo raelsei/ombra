@@ -43,7 +43,7 @@ export function Collection() {
                 marginBottom: '18px',
               }}
             >
-              01 — The Collection
+              01 · The Collection
             </div>
             <h2
               data-reveal=""
@@ -59,10 +59,9 @@ export function Collection() {
                 fontSize: 'clamp(38px,7vw,104px)',
                 lineHeight: 0.94,
                 letterSpacing: '-.02em',
-                mixBlendMode: 'difference',
               }}
             >
-              Six Objects
+              Six Pieces
             </h2>
           </div>
           <p
@@ -79,7 +78,7 @@ export function Collection() {
               color: 'rgba(236,230,218,.55)',
             }}
           >
-            A wardrobe for the space between presence and its trace. Photographed in motion, never still.
+            A wardrobe for the space between presence and its trace. Photographed in motion, never at rest.
           </p>
         </div>
 
@@ -117,7 +116,7 @@ export function Collection() {
                 }}
               >
                 <span style={{ color: 'rgba(236,230,218,.78)' }}>
-                  {item.index} — {item.name}
+                  {item.index} · {item.name}
                 </span>
                 <span style={{ color: 'rgba(236,230,218,.34)' }}>{item.material}</span>
               </div>

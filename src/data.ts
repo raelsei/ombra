@@ -1,5 +1,5 @@
 /* ===================================================================
-   OMBRA — content & copy. Single source of truth for every section.
+   OMBRA · content & copy. Single source of truth for every section.
    Kept verbatim from the design spec (README §6).
    =================================================================== */
 
@@ -36,10 +36,10 @@ export const COLLECTION: CollectionItem[] = [
 ]
 
 export const LOOKS: LookItem[] = [
-  { id: 'rom-look-1', caption: 'Look 01 — Figure, dissolving', ratio: '3 / 4', gridColumn: '1 / span 6', margin: '0', delay: 0, alt: 'Full-length figure walking out of frame, strong motion blur, dissolving into the black.' },
-  { id: 'rom-look-2', caption: 'Look 02 — The coat, worn by air', ratio: '4 / 5', gridColumn: '8 / span 5', margin: 'clamp(60px,12vh,150px) 0 0', delay: 0.1, alt: 'A coat billowing as if worn by no one, empty hood, wind-caught fabric.' },
-  { id: 'rom-look-3', caption: 'Look 03 — Detail, the seam of absence', ratio: '1 / 1', gridColumn: '2 / span 4', margin: 'clamp(20px,6vh,80px) 0 0', delay: 0.06, alt: 'Extreme close-up of a raw seam / hand-stitch on pale fabric, shallow depth of field.' },
-  { id: 'rom-look-4', caption: 'Look 04 — Exit', ratio: '3 / 4', gridColumn: '8 / span 4', margin: 'clamp(10px,3vh,40px) 0 0', delay: 0.13, alt: 'The figure from behind at the edge of the frame, mostly shadow, one shoulder lit.' },
+  { id: 'rom-look-1', caption: 'Look 01 · Figure, dissolving', ratio: '3 / 4', gridColumn: '1 / span 6', margin: '0', delay: 0, alt: 'Full-length figure walking out of frame, strong motion blur, dissolving into the black.' },
+  { id: 'rom-look-2', caption: 'Look 02 · The coat, worn by air', ratio: '4 / 5', gridColumn: '8 / span 5', margin: 'clamp(60px,12vh,150px) 0 0', delay: 0.1, alt: 'A coat billowing as if worn by no one, empty hood, wind-caught fabric.' },
+  { id: 'rom-look-3', caption: 'Look 03 · Detail, the seam of absence', ratio: '1 / 1', gridColumn: '2 / span 4', margin: 'clamp(20px,6vh,80px) 0 0', delay: 0.06, alt: 'Extreme close-up of a raw seam / hand-stitch on pale fabric, shallow depth of field.' },
+  { id: 'rom-look-4', caption: 'Look 04 · Exit', ratio: '3 / 4', gridColumn: '8 / span 4', margin: 'clamp(10px,3vh,40px) 0 0', delay: 0.13, alt: 'The figure from behind at the edge of the frame, mostly shadow, one shoulder lit.' },
 ]
 
 export const HOUSE_SPECS: { term: string; value: string; href?: string }[] = [
