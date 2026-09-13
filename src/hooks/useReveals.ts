@@ -1,11 +1,13 @@
 import { useEffect, type RefObject } from 'react'
 
 /**
- * Reveals `[data-reveal]` elements inside `rootRef` on intersection.
- * Anything already in the first viewport is shown at once — the observer alone
- * would leave above-the-fold content hidden until the first scroll.
- * The 6s timeout is a safety net so nothing stays invisible if a callback never
- * fires. `active` holds the first run back until the loader has faded.
+ * Reveals `[data-reveal]` elements inside `rootRef` as their rect enters the
+ * viewport. `active` holds the first pass back until the loader has faded.
+ *
+ * A scroll-driven rect check rather than an IntersectionObserver, deliberately:
+ * the mask-rise headings sit at `translateY(115%)` inside an `overflow: hidden`
+ * wrapper, so an observer on the target measures an intersection ratio of zero
+ * — ancestor clipping — and never fires for exactly the elements that matter.
  */
 export function useReveals(rootRef: RefObject<HTMLElement | null>, active: boolean) {
   useEffect(() => {
@@ -13,35 +15,39 @@ export function useReveals(rootRef: RefObject<HTMLElement | null>, active: boole
     const root = rootRef.current
     if (!root) return
 
-    const els = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'))
-    const show = (el: HTMLElement) => {
-      el.style.opacity = '1'
-      el.style.transform = 'none'
-      el.style.filter = 'none'
+    let pending = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'))
+    let raf = 0
+
+    const detach = () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
     }
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            show(e.target as HTMLElement)
-            io.unobserve(e.target)
-          }
-        })
-      },
-      { threshold: 0.01, rootMargin: '0px 0px -8% 0px' },
-    )
+    const pass = () => {
+      raf = 0
+      const limit = window.innerHeight * 0.96
+      pending = pending.filter((el) => {
+        if (el.getBoundingClientRect().top >= limit) return true
+        el.style.opacity = '1'
+        el.style.transform = 'none'
+        el.style.filter = 'none'
+        return false
+      })
+      if (pending.length === 0) detach()
+    }
 
-    els.forEach((el) => {
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.96) show(el)
-      else io.observe(el)
-    })
+    // one rect pass per frame at most, however fast the scroll events arrive
+    function schedule() {
+      if (!raf) raf = requestAnimationFrame(pass)
+    }
 
-    const safety = window.setTimeout(() => els.forEach(show), 6000)
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    pass()
 
     return () => {
-      io.disconnect()
-      window.clearTimeout(safety)
+      detach()
+      if (raf) cancelAnimationFrame(raf)
     }
   }, [rootRef, active])
 }

@@ -102,6 +102,7 @@ export function useFilmStage(opts: Opts) {
     let progress = 0
     let lastY = window.scrollY
     let scrollVel = 0
+    let scrollDir = 1
     let rate: number | null = null
     let floatFrame = 0
     let lastIdx = -1
@@ -143,7 +144,11 @@ export function useFilmStage(opts: Opts) {
     }
     sizeCanvas()
 
-    const images: HTMLImageElement[] = []
+    const images: (HTMLImageElement | undefined)[] = []
+    const requested = new Uint8Array(FRAME_COUNT)
+    const loaded = new Uint8Array(FRAME_COUNT)
+    const inFlight = new Set<HTMLImageElement>()
+    let spineCursor = 0
     let readyFired = false
     const fireReady = () => {
       if (readyFired || disposed) return
@@ -151,26 +156,69 @@ export function useFilmStage(opts: Opts) {
       onReadyRef.current()
     }
 
-    // Frames stream in but are never force-decoded — that would pin ~2MB of
-    // RGBA per frame in RAM. drawImage decodes on demand against the browser's
-    // bounded cache, and readiness fires on frame 0 so the loader clears early.
-    const preloadAll = () => {
-      for (let i = 0; i < FRAME_COUNT; i++) {
-        const img = new Image()
-        img.decoding = 'async'
-        images[i] = img
-        img.addEventListener(
-          'load',
-          () => {
-            if (i === 0 && !curImg) {
-              drawImageCover(img)
-              fireReady()
-            }
-          },
-          { once: true },
-        )
-        img.src = frameUrl(i)
+    /* Frames are fetched on demand, never all at once: 1458 parallel requests
+     * saturate the connection and push the editorial photographs to the back of
+     * the queue. Three rules keep it bounded — a coarse spine so any scroll
+     * position always has a frame within SPINE to draw, a window around the
+     * playhead biased the way you are scrolling, and a cap on open requests.
+     * Nothing is force-decoded: drawImage decodes against the browser's own
+     * cache, so density costs bandwidth, not RAM. */
+    const SPINE = 24 // one frame per second of source
+    const AHEAD = 72
+    const BEHIND = 24
+    const MAX_IN_FLIGHT = 6
+
+    const request = (i: number) => {
+      if (i < 0 || i >= FRAME_COUNT || requested[i]) return false
+      requested[i] = 1
+      const img = new Image()
+      img.decoding = 'async'
+      images[i] = img
+      inFlight.add(img)
+      img.addEventListener(
+        'load',
+        () => {
+          inFlight.delete(img)
+          if (disposed) return
+          loaded[i] = 1
+          if (i === 0 && !curImg) {
+            drawImageCover(img)
+            fireReady()
+          }
+        },
+        { once: true },
+      )
+      img.addEventListener('error', () => inFlight.delete(img), { once: true })
+      img.src = frameUrl(i)
+      return true
+    }
+
+    // Recomputed from the live playhead every frame, so scrolling away never
+    // leaves stale work queued: free slots always go to the most useful frame.
+    const pump = (idx: number, dir: number) => {
+      let free = MAX_IN_FLIGHT - inFlight.size
+      if (free <= 0) return
+      const step = dir < 0 ? -1 : 1
+      if (request(idx)) free--
+      for (let d = 1; d <= 8 && free > 0; d++) if (request(idx + d * step)) free--
+      while (free > 0 && spineCursor < FRAME_COUNT) {
+        const s = spineCursor
+        spineCursor += SPINE
+        if (request(s)) free--
       }
+      for (let d = 9; d <= AHEAD && free > 0; d++) if (request(idx + d * step)) free--
+      for (let d = 1; d <= BEHIND && free > 0; d++) if (request(idx - d * step)) free--
+    }
+
+    // The exact frame may not have landed yet; the spine guarantees a near one
+    // has. Returns the index actually available, or -1 while nothing is.
+    const pickFrame = (idx: number) => {
+      if (loaded[idx]) return idx
+      for (let d = 1; d <= SPINE; d++) {
+        if (loaded[idx - d]) return idx - d
+        if (loaded[idx + d]) return idx + d
+      }
+      return -1
     }
 
     const readScroll = () => {
@@ -238,7 +286,8 @@ export function useFilmStage(opts: Opts) {
 
     let detachVideo: (() => void) | null = null
     if (mode === 'scrub') {
-      preloadAll()
+      // frame 0 immediately so the loader can clear; the rest follows the playhead
+      request(0)
     } else {
       if (video) {
         video.preload = 'auto'
@@ -297,6 +346,7 @@ export function useFilmStage(opts: Opts) {
       const dY = y - lastY
       lastY = y
       scrollVel = scrollVel * 0.86 + Math.abs(dY) * 0.14
+      if (dY !== 0) scrollDir = dY > 0 ? 1 : -1
 
       let tx = 0.5,
         ty = 0.5
@@ -306,7 +356,9 @@ export function useFilmStage(opts: Opts) {
         const fTarget = progress * (FRAME_COUNT - 1)
         floatFrame = lerp(floatFrame, fTarget, 0.2)
         const idx = clamp(Math.round(floatFrame), 0, FRAME_COUNT - 1)
-        const img = images[idx]
+        pump(idx, scrollDir)
+        const at = pickFrame(idx)
+        const img = at < 0 ? undefined : images[at]
 
         // Apparition trail: each frame the canvas is dimmed by a
         // velocity-dependent veil, then the current frame is stamped with
@@ -324,9 +376,9 @@ export function useFilmStage(opts: Opts) {
             ctx.globalCompositeOperation = 'source-over'
           }
           lastIdx = -1 // force one clean stamp once the trail settles
-        } else if (idx !== lastIdx) {
+        } else if (at !== lastIdx) {
           if (img && img.naturalWidth) drawImageCover(img)
-          lastIdx = idx
+          lastIdx = at
         }
 
         // the stage inhales slightly while the figure moves
@@ -336,7 +388,7 @@ export function useFilmStage(opts: Opts) {
           lastScale = scale
         }
         curTime = progress * DURATION
-        const c = CENTROIDS[idx]
+        const c = CENTROIDS[at < 0 ? idx : at]
         tx = c[0]
         ty = c[1]
       } else {
@@ -400,6 +452,8 @@ export function useFilmStage(opts: Opts) {
       window.clearTimeout(failsafe)
       window.removeEventListener('resize', onResize)
       detachVideo?.()
+      for (const img of inFlight) img.src = ''
+      inFlight.clear()
     }
   }, [mode, reduced, canvasRef, glowRef, videoRef])
 }
