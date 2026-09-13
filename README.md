@@ -79,10 +79,10 @@ npm run dev        # http://localhost:5173
 npm run build      # tsc -b && vite build → dist/
 npm run preview    # serve the production build
 npm run lint       # eslint
+npm test           # node --test, the centroid reducer
 ```
 
-Node 20+ (CI builds on 22). No API keys, no env file, no backend. `node --test
-scripts/` runs the unit tests for the centroid reducer.
+Node 20+ (CI builds on 22). No API keys, no env file, no backend.
 
 ## Why a frame sequence, not a video
 
@@ -219,7 +219,7 @@ src/
     Nav.tsx  StatusBar.tsx  Loader.tsx  GhostIndex.tsx  ImageSlot.tsx
     sections/              Hero · Apparition · Collection · Lookbook · House · Footer
 scripts/build-assets.sh    the whole media pipeline
-scripts/centroids.mjs      the centroid reducer (+ .test.mjs, node --test)
+scripts/centroids.mjs      the centroid reducer (+ .test.mjs, npm test)
 docs/imagery.md            the eleven image slots and the visual rule
 ```
 
@@ -312,7 +312,7 @@ Known, deliberate, and not yet fixed — listed so you do not have to find them:
   `mix-blend-mode: difference` over a moving film, so their contrast ratio is a
   function of the frame behind them. Deliberate, but it cannot pass an automated
   audit.
-- **Tests cover the reducer only.** `node --test scripts/` exercises the
+- **Tests cover the reducer only.** `npm test` exercises the
   centroid maths and its degenerate-input boundaries. The rAF loop and canvas
   compositing are verified by hand, not in CI.
 - **9.6 MB of frames live in git.** Committed so a clone is a working site with
