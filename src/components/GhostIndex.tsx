@@ -1,10 +1,7 @@
 import type { CSSProperties } from 'react'
 
-/**
- * Huge ghost numeral behind a section — editorial rhythm. Sits at the section's
- * z-floor (content wrappers are position:relative and paint above it); barely
- * there at ~5% bone, but it gives each chapter a page number you can feel.
- */
+/** zIndex 0 keeps the numeral below section content, which paints above it via
+ *  its own position:relative wrapper. */
 export function GhostIndex({ n, side }: { n: string; side: 'left' | 'right' }) {
   const style: CSSProperties = {
     position: 'absolute',

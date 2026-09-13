@@ -32,7 +32,6 @@ const railBase: CSSProperties = {
   textShadow: '0 0 10px rgba(0,0,0,.9)',
 }
 
-/** Decorative frame: hairline inset border, corner ticks, rotated side rails. */
 export function Chrome() {
   return (
     <>

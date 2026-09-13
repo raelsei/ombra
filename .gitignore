@@ -1,13 +1,15 @@
 node_modules
 dist
 dist-ssr
+
+# local env / editor / OS noise
 *.local
-.DS_Store
+.env*
+!.env.example
 .vite
+.DS_Store
+.idea
+.vscode
 
-# verification artifacts (Playwright screenshots)
-.playwright-mcp/
-/*.jpeg
-
-# TS build info
+# TS incremental build info
 *.tsbuildinfo

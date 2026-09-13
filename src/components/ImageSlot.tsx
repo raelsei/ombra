@@ -3,28 +3,18 @@ import { useState } from 'react'
 const BASE = import.meta.env.BASE_URL
 
 interface Props {
-  /** slot id — resolves to `/images/<id>.jpg` unless `src` is given */
+  /** resolves to `<BASE_URL>images/<id>.jpg`; BASE_URL survives sub-path deploys */
   id: string
   alt: string
-  /** empty-state label */
   placeholder: string
-  /** optional explicit source, overriding the id convention */
-  src?: string
 }
 
-/**
- * Production image slot. Renders the real photograph if one exists at
- * `public/images/<id>.jpg` (or an explicit `src`); otherwise shows a refined
- * empty well so the layout reads intentionally before the art is wired.
- * Drop correctly-named files into `public/images/` and they appear.
- */
-export function ImageSlot({ id, alt, placeholder, src }: Props) {
+export function ImageSlot({ id, alt, placeholder }: Props) {
   const [failed, setFailed] = useState(false)
-  const resolved = src ?? `${BASE}images/${id}.jpg`
+  const resolved = `${BASE}images/${id}.jpg`
 
   return (
     <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      {/* empty-state well (always behind the image) */}
       <div
         aria-hidden={!failed}
         style={{

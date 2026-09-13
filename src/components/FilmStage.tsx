@@ -10,22 +10,12 @@ interface Props {
 
 const BASE = import.meta.env.BASE_URL
 
-// contrast crushes compression noise in the blacks so the footage's black
-// background merges with the page. brightness + opacity soften the figure off
-// pure-white, and a touch of sepia warms it toward the bone palette so it sits
-// in the theme rather than glaring white.
+// contrast crushes compression noise so the footage's black merges with the
+// page; brightness/opacity pull the figure off pure white and the sepia warms
+// it toward the bone palette.
 const FILM_FILTER = 'contrast(1.08) brightness(0.82) saturate(0) sepia(0.3) opacity(0.78)'
 
-/**
- * The film as a fixed BACKDROP (z-index 1, beneath <main> at z3): the figure
- * lives in the page's negative space, and the content's translucent panels and
- * photography pass over it — the stage recedes, the collection leads.
- *
- * The inversion signature survives at the typographic level: the big display
- * headings carry `mix-blend-mode: difference`, so wherever the bright figure
- * walks behind them the letters flip dark — a quiet echo of the negative
- * instead of a full-page effect.
- */
+/** The film as a fixed backdrop at z1, beneath <main> at z3. */
 export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
   const filmLayer: React.CSSProperties = {
     position: 'fixed',
@@ -40,15 +30,14 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
 
   return (
     <>
-      {/* frame-scrub renderer — visible only while the hero is on screen, then
-          faded out by --film-fade so the content sections read undistracted */}
+      {/* frame-scrub renderer */}
       <canvas
         ref={canvasRef}
         aria-hidden="true"
         style={{ ...filmLayer, opacity: mode === 'scrub' ? 'var(--film-fade)' : 0 }}
       />
 
-      {/* smooth-drift renderer */}
+      {/* smooth-drift renderer (?motion=drift) */}
       <video
         ref={videoRef}
         aria-hidden="true"
@@ -58,14 +47,11 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
         poster={`${BASE}film-poster.jpg`}
         style={{ ...filmLayer, objectFit: 'cover', opacity: mode === 'drift' ? 'var(--film-fade)' : 0 }}
       >
-        <source src={`${BASE}film.webm`} type="video/webm" />
         <source src={`${BASE}film.mp4`} type="video/mp4" />
       </video>
 
-      {/* LIGHT SEEP — a blurred, screen-blended copy of the film ABOVE the
-          content (z4): where the figure walks behind a panel or a photograph,
-          its light bleeds through like a lamp behind fabric. Quarter-res canvas;
-          the heavy CSS blur does the diffusion. */}
+      {/* light seep: a blurred, screen-blended copy of the film above the
+          content at z4. Half-res — the heavy CSS blur does the diffusion. */}
       <canvas
         ref={glowRef}
         aria-hidden="true"
@@ -83,7 +69,7 @@ export function FilmStage({ canvasRef, glowRef, videoRef, mode }: Props) {
         }}
       />
 
-      {/* grain + vignette ride above the film, below the content (z2) */}
+      {/* grain + vignette, above the film and below the content (z2) */}
       <div
         aria-hidden="true"
         style={{ position: 'fixed', inset: 0, zIndex: 2, pointerEvents: 'none', overflow: 'hidden' }}

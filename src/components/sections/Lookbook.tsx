@@ -4,7 +4,6 @@ import { GhostIndex } from '../GhostIndex'
 
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
-/** 03 · LOOKBOOK — "In Motion". 4 asymmetric figures on a 12-col editorial grid. */
 export function Lookbook() {
   return (
     <section

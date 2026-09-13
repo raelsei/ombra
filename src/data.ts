@@ -1,8 +1,3 @@
-/* ===================================================================
-   OMBRA · content & copy. Single source of truth for every section.
-   Kept verbatim from the design spec (README §6).
-   =================================================================== */
-
 export interface CollectionItem {
   id: string
   index: string
@@ -10,9 +5,8 @@ export interface CollectionItem {
   material: string
   /** reveal stagger delay (s) */
   delay: number
-  /** generation-prompt summary → alt text */
   alt: string
-  /** 12-col editorial placement */
+  /** 12-col grid placement */
   gridColumn: string
   /** vertical offset for the staggered baseline */
   margin: string
@@ -24,7 +18,7 @@ export interface LookItem {
   ratio: string
   /** 12-col grid placement */
   gridColumn: string
-  /** vertical offset for the asymmetric editorial layout */
+  /** vertical offset for the staggered baseline */
   margin: string
   delay: number
   alt: string
@@ -60,10 +54,10 @@ export const NAV_LINKS: { label: string; href: string }[] = [
 ]
 
 export const FOOTER_LINKS: { label: string; href: string }[] = [
-  { label: 'Instagram', href: '#top' },
-  { label: 'Contact', href: '#top' },
-  { label: 'Stockists', href: '#top' },
-  { label: 'Press', href: '#top' },
+  { label: 'Collection', href: '#collection' },
+  { label: 'Lookbook', href: '#lookbook' },
+  { label: 'House', href: '#house' },
+  { label: 'Enquiries', href: 'mailto:studio@ombra.atelier' },
 ]
 
 export const HOUSE_PORTRAIT_ALT =

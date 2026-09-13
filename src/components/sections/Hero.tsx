@@ -8,7 +8,6 @@ const maskLine = (delay: string, color?: string) => ({
   ...(color ? { color } : {}),
 })
 
-/** 00 · HERO — heading dodges horizontally away from the figure (--mx). */
 export function Hero() {
   return (
     <section

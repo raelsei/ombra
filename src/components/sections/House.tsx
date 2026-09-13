@@ -18,7 +18,6 @@ const bodyPara = (delay: string) =>
     color: 'rgba(236,230,218,.82)',
   }) as const
 
-/** 04 · HOUSE — portrait + manifesto + spec list. */
 export function House() {
   return (
     <section

@@ -1,6 +1,5 @@
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
-/** 01 · APPARITION — right-aligned slogan beat; heading dodges toward the figure. */
 export function Apparition() {
   return (
     <section

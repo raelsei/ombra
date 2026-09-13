@@ -4,7 +4,6 @@ import { GhostIndex } from '../GhostIndex'
 
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
-/** 02 · COLLECTION — "Six Pieces". 12-col editorial grid, staggered baselines. */
 export function Collection() {
   return (
     <section

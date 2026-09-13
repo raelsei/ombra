@@ -1,16 +1,11 @@
 import { useEffect, type RefObject } from 'react'
 
 /**
- * Reveals every `[data-reveal]` element inside `rootRef`.
- *  - Anything already in the first viewport is revealed immediately.
- *  - The rest are revealed on intersection (fade + rise + de-blur, or a
- *    mask-rise for elements that start at translateY(115%)).
- *  - A safety net force-reveals everything after 6s so nothing sticks hidden.
- *
- * `active` gates the first run so the reveal choreography plays *after* the
- * loader fades (matches the prototype), or fires straight away for reduced motion.
- * The reveal only mutates inline style, so it composes with each element's own
- * transition timing declared in JSX.
+ * Reveals `[data-reveal]` elements inside `rootRef` on intersection.
+ * Anything already in the first viewport is shown at once — the observer alone
+ * would leave above-the-fold content hidden until the first scroll.
+ * The 6s timeout is a safety net so nothing stays invisible if a callback never
+ * fires. `active` holds the first run back until the loader has faded.
  */
 export function useReveals(rootRef: RefObject<HTMLElement | null>, active: boolean) {
   useEffect(() => {

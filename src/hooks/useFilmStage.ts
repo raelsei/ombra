@@ -3,26 +3,23 @@ import meta from '../frames-meta.json'
 
 export type Motion = 'scrub' | 'drift'
 
-interface Centroid {
-  0: number
-  1: number
-  2: number
-}
-const CENTROIDS = meta.centroids as unknown as Centroid[]
+/** [x, y] of the bright figure's luminance centroid, 0–1, one per frame. */
+type Centroid = [number, number]
+
+const CENTROIDS = meta.centroids as Centroid[]
 const FRAME_COUNT = meta.count
-const DURATION = meta.count / meta.fps // ≈ 60.8s
+const DURATION = meta.count / meta.fps
 const BASE = import.meta.env.BASE_URL
 
 const frameUrl = (i: number) => `${BASE}frames/${String(i + 1).padStart(3, '0')}.jpg`
 
 interface Opts {
   mode: Motion
+  /** drift idle playback rate */
   baseSpeed: number
   reduced: boolean
-  /** live ref — read inside the loop without re-initialising */
   showFigureData: boolean
   canvasRef: RefObject<HTMLCanvasElement | null>
-  /** blurred screen-blend copy above the content — "light seeping through" */
   glowRef: RefObject<HTMLCanvasElement | null>
   videoRef: RefObject<HTMLVideoElement | null>
   onReady: () => void
@@ -41,24 +38,25 @@ const mmss = (s: number) => {
 }
 
 /**
- * The whole reactive film engine, driven from ONE requestAnimationFrame loop
- * (no per-node listeners, no layout thrash — everything flows through CSS vars
- * on <html> and a handful of textContent writes).
+ * The film engine: one requestAnimationFrame loop that writes CSS custom
+ * properties on <html> plus a few textContent updates, so nothing re-renders.
  *
- * scrub  — draw the nearest pre-decoded frame to <canvas>, eased float index,
- *          redraw only on index change. Centroid comes from the build-time lookup.
- * drift  — the <video> plays natively; scroll velocity ramps playbackRate.
- *          Centroid is sampled live from a 48×27 offscreen canvas.
- * reduced-motion — freeze on a still frame, no rAF; chrome updates on scroll only.
+ * scrub  — draw the nearest pre-decoded frame to <canvas>; centroid from the
+ *          build-time lookup.
+ * drift  — the <video> plays natively, scroll velocity ramps playbackRate;
+ *          centroid sampled live from a 48×27 offscreen canvas.
+ * reduced — freeze on a still frame, no rAF; chrome updates on scroll only.
  */
 export function useFilmStage(opts: Opts) {
-  const { mode, baseSpeed, reduced, canvasRef, glowRef, videoRef, onReady } = opts
+  const { mode, reduced, canvasRef, glowRef, videoRef } = opts
 
-  // read-only refs so config that shouldn't re-init the loop stays fresh
+  // live refs: config that must not tear down and re-init the loop
   const showFigRef = useRef(opts.showFigureData)
   showFigRef.current = opts.showFigureData
-  const onReadyRef = useRef(onReady)
-  onReadyRef.current = onReady
+  const baseSpeedRef = useRef(opts.baseSpeed)
+  baseSpeedRef.current = opts.baseSpeed
+  const onReadyRef = useRef(opts.onReady)
+  onReadyRef.current = opts.onReady
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -69,32 +67,27 @@ export function useFilmStage(opts: Opts) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // --- status-bar readouts (fixed ids) ---
-    const $ = (id: string) => document.getElementById(id)
-    const figX = $('fig-x'),
-      figY = $('fig-y'),
-      scrubEl = $('scrub'),
-      durEl = $('dur'),
-      idxCur = $('idx-cur'),
-      idxTot = $('idx-tot'),
-      pbar = $('pbar')
+    // StatusBar renders these ids; the loop writes them imperatively.
+    const figX = document.getElementById('fig-x'),
+      figY = document.getElementById('fig-y'),
+      scrubEl = document.getElementById('scrub'),
+      durEl = document.getElementById('dur'),
+      idxCur = document.getElementById('idx-cur'),
+      idxTot = document.getElementById('idx-tot'),
+      pbar = document.getElementById('pbar')
     const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-screen-label]'))
     if (idxTot) idxTot.textContent = String(sections.length).padStart(2, '0')
     if (durEl) durEl.textContent = mmss(DURATION)
 
-    // The film lives in the opening. It stays fully visible through the hero and
-    // the Apparition beat, then fades out as the Collection rises into view so
-    // the content sections read clean and undistracted. Keyed to the collection's
-    // live viewport position → resize-proof.
+    // The film belongs to the opening: it fades in over the first screen of
+    // scroll and back out as the Collection rises. Keyed to the Collection's
+    // live viewport position rather than a pixel offset, so it survives resize.
     const collectionEl = document.getElementById('collection')
     const smooth = (t: number) => t * t * (3 - 2 * t)
     const writeFilmFade = () => {
       const vh = window.innerHeight || 1
       const vw = window.innerWidth || 1
-      // APPEAR — invisible at the very top, softly fades in over the first ~0.6
-      // screen of scroll while sliding in from beyond the right edge.
       const fadeIn = smooth(clamp(window.scrollY / (vh * 0.6), 0, 1))
-      // LEAVE — fades back out as the Collection rises into view (resize-proof).
       let fadeOut = 1
       if (collectionEl) {
         const top = collectionEl.getBoundingClientRect().top
@@ -104,10 +97,8 @@ export function useFilmStage(opts: Opts) {
       root.style.setProperty('--film-x', ((1 - fadeIn) * vw * 0.11).toFixed(1) + 'px')
     }
 
-    // --- reactive state ---
     let mx = 0.5,
-      my = 0.5,
-      mp = 0
+      my = 0.5
     let progress = 0
     let lastY = window.scrollY
     let scrollVel = 0
@@ -118,7 +109,6 @@ export function useFilmStage(opts: Opts) {
     let lastScale = 1.04
     let disposed = false
 
-    // --- cover-fit canvases (main + blurred glow copy) ---
     const dpr = Math.min(2, window.devicePixelRatio || 1)
     const glow = glowRef.current
     const gctx = glow ? glow.getContext('2d') : null
@@ -127,7 +117,7 @@ export function useFilmStage(opts: Opts) {
       canvas.width = Math.round(window.innerWidth * dpr)
       canvas.height = Math.round(window.innerHeight * dpr)
       if (glow) {
-        // quarter-res is plenty — the CSS blur erases any detail anyway
+        // half-res: the CSS blur erases any detail anyway
         glow.width = Math.round(window.innerWidth * 0.5)
         glow.height = Math.round(window.innerHeight * 0.5)
       }
@@ -146,14 +136,13 @@ export function useFilmStage(opts: Opts) {
     }
     const drawImageCover = (img: HTMLImageElement) => {
       drawCoverTo(ctx, canvas.width, canvas.height, img, img.naturalWidth, img.naturalHeight)
-      // glow always gets a plain stamp (no trail compositing) — the light that
-      // seeps through the content follows the figure, not its ghosts
+      // the glow gets a plain stamp, never the trail — the light that seeps
+      // through the content follows the figure, not its ghosts
       if (gctx && glow) drawCoverTo(gctx, glow.width, glow.height, img, img.naturalWidth, img.naturalHeight)
       curImg = img
     }
     sizeCanvas()
 
-    // --- frame preload (scrub + reduced) ---
     const images: HTMLImageElement[] = []
     let readyFired = false
     const fireReady = () => {
@@ -162,11 +151,9 @@ export function useFilmStage(opts: Opts) {
       onReadyRef.current()
     }
 
-    // Stream every frame in (they are ~8.5KB each). We DON'T force-decode all
-    // of them — that would pin ~2MB × N of RGBA in RAM. Instead each frame is
-    // decoded on demand by drawImage (the browser keeps a bounded LRU decode
-    // cache), and readiness fires as soon as frame 0 lands so the loader clears
-    // fast while the rest keep loading in the background.
+    // Frames stream in but are never force-decoded — that would pin ~2MB of
+    // RGBA per frame in RAM. drawImage decodes on demand against the browser's
+    // bounded cache, and readiness fires on frame 0 so the loader clears early.
     const preloadAll = () => {
       for (let i = 0; i < FRAME_COUNT; i++) {
         const img = new Image()
@@ -193,8 +180,6 @@ export function useFilmStage(opts: Opts) {
 
     const writeChrome = (curTime: number) => {
       root.style.setProperty('--mx', mx.toFixed(4))
-      root.style.setProperty('--my', my.toFixed(4))
-      root.style.setProperty('--mp', mp.toFixed(4))
       root.style.setProperty('--p', progress.toFixed(4))
 
       const showFig = showFigRef.current
@@ -212,7 +197,7 @@ export function useFilmStage(opts: Opts) {
       if (pbar) pbar.style.transform = 'scaleX(' + progress.toFixed(4) + ')'
     }
 
-    // ================= REDUCED MOTION — frozen still, no rAF =================
+    // reduced motion — one still frame, no rAF; chrome follows scroll only
     if (reduced) {
       const first = new Image()
       first.src = frameUrl(0)
@@ -220,11 +205,10 @@ export function useFilmStage(opts: Opts) {
         drawImageCover(first)
         fireReady()
       })
-      window.setTimeout(fireReady, 2600)
+      const rmFailsafe = window.setTimeout(fireReady, 2600)
       const c0 = CENTROIDS[0]
       mx = c0[0]
       my = c0[1]
-      mp = c0[2]
       const onScroll = () => {
         readScroll()
         writeFilmFade()
@@ -240,22 +224,22 @@ export function useFilmStage(opts: Opts) {
       onScroll()
       return () => {
         disposed = true
+        window.clearTimeout(rmFailsafe)
         window.removeEventListener('scroll', onScroll)
         window.removeEventListener('resize', onResize)
       }
     }
 
-    // ================= MOTION — one rAF loop =================
-    // offscreen sampler for live centroid (drift mode)
+    // offscreen sampler for the live drift centroid
     const sc = document.createElement('canvas')
     sc.width = 48
     sc.height = 27
     const sctx = sc.getContext('2d', { willReadFrequently: true })
 
+    let detachVideo: (() => void) | null = null
     if (mode === 'scrub') {
       preloadAll()
     } else {
-      // drift — the video is the visible layer
       if (video) {
         video.preload = 'auto'
         video.loop = true
@@ -271,9 +255,13 @@ export function useFilmStage(opts: Opts) {
         }
         video.addEventListener('canplay', onCanPlay)
         video.addEventListener('loadeddata', onCanPlay)
+        detachVideo = () => {
+          video.removeEventListener('canplay', onCanPlay)
+          video.removeEventListener('loadeddata', onCanPlay)
+        }
       }
     }
-    // reveal the design even if decode/preload stalls
+    // reveal the page even if decode or preload stalls
     const failsafe = window.setTimeout(fireReady, 2600)
 
     const onResize = () => {
@@ -282,9 +270,9 @@ export function useFilmStage(opts: Opts) {
     }
     window.addEventListener('resize', onResize)
 
-    // depth pass — [data-parallax] media drifts at its own speed relative to
-    // the viewport centre. We subtract the already-applied translate before
-    // measuring so the fixed point is the untransformed layout position.
+    // [data-parallax] media drifts relative to the viewport centre. The
+    // already-applied translate is subtracted before measuring, so the fixed
+    // point stays the untransformed layout position.
     const plxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'))
     const plxApplied = new WeakMap<HTMLElement, number>()
     const parallaxPass = () => {
@@ -311,8 +299,7 @@ export function useFilmStage(opts: Opts) {
       scrollVel = scrollVel * 0.86 + Math.abs(dY) * 0.14
 
       let tx = 0.5,
-        ty = 0.5,
-        tp = 0
+        ty = 0.5
       let curTime = 0
 
       if (mode === 'scrub') {
@@ -321,12 +308,10 @@ export function useFilmStage(opts: Opts) {
         const idx = clamp(Math.round(floatFrame), 0, FRAME_COUNT - 1)
         const img = images[idx]
 
-        // APPARITION TRAIL — the signature. Scroll velocity smears the figure
-        // into fading ghosts of itself: each frame the canvas is dimmed by a
-        // velocity-dependent veil (fast scroll → thin veil → long trail), then
-        // the current frame is stamped with `lighten` so only the bright figure
-        // accumulates. At rest the ghosts dissolve in under a second and one
-        // clean silhouette remains — the garment cut for the shape left behind.
+        // Apparition trail: each frame the canvas is dimmed by a
+        // velocity-dependent veil, then the current frame is stamped with
+        // `lighten`, so only the bright figure accumulates. Fast scroll → thin
+        // veil → long trail. At rest the ghosts dissolve in under a second.
         const velNorm = Math.min(1, scrollVel / 48)
         trailHeat = Math.max(velNorm, trailHeat * 0.94)
         if (trailHeat > 0.02) {
@@ -344,7 +329,7 @@ export function useFilmStage(opts: Opts) {
           lastIdx = idx
         }
 
-        // stage breathing — the frame inhales slightly while the figure moves
+        // the stage inhales slightly while the figure moves
         const scale = 1.04 + trailHeat * 0.02
         if (Math.abs(scale - lastScale) > 0.0005) {
           root.style.setProperty('--film-scale', scale.toFixed(4))
@@ -354,11 +339,10 @@ export function useFilmStage(opts: Opts) {
         const c = CENTROIDS[idx]
         tx = c[0]
         ty = c[1]
-        tp = c[2]
       } else {
-        // drift — native playback, scroll ramps the rate
+        // native playback; scroll velocity ramps the rate instead of seeking
         const boost = Math.min(3.4, scrollVel * 0.06)
-        const target = baseSpeed + boost
+        const target = baseSpeedRef.current + boost
         rate = rate == null ? target : lerp(rate, target, 0.06)
         if (video && readyFired) {
           try {
@@ -376,8 +360,7 @@ export function useFilmStage(opts: Opts) {
               const d = sctx.getImageData(0, 0, sc.width, sc.height).data
               let wsum = 0,
                 xsum = 0,
-                ysum = 0,
-                bright = 0
+                ysum = 0
               const TH = 62
               for (let py = 0; py < sc.height; py++)
                 for (let px = 0; px < sc.width; px++) {
@@ -388,13 +371,11 @@ export function useFilmStage(opts: Opts) {
                     wsum += w
                     xsum += w * px
                     ysum += w * py
-                    bright++
                   }
                 }
               if (wsum > 0) {
                 tx = xsum / wsum / (sc.width - 1)
                 ty = ysum / wsum / (sc.height - 1)
-                tp = Math.min(1, bright / (sc.width * sc.height) / 0.24)
               }
             } catch {
               /* cross-origin / not decodable */
@@ -405,7 +386,6 @@ export function useFilmStage(opts: Opts) {
 
       mx = lerp(mx, tx, 0.11)
       my = lerp(my, ty, 0.11)
-      mp = lerp(mp, tp, 0.09)
 
       writeChrome(curTime)
       writeFilmFade()
@@ -419,6 +399,7 @@ export function useFilmStage(opts: Opts) {
       cancelAnimationFrame(raf)
       window.clearTimeout(failsafe)
       window.removeEventListener('resize', onResize)
+      detachVideo?.()
     }
-  }, [mode, baseSpeed, reduced, canvasRef, videoRef])
+  }, [mode, reduced, canvasRef, glowRef, videoRef])
 }

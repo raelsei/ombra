@@ -1,6 +1,5 @@
-/** Bottom status bar — live figure readout, scrubber, section index, REC.
- *  A decorative HUD (values written imperatively by the rAF loop), so it's
- *  hidden from assistive tech. Plus the 1px scroll-progress line. */
+/** The ids below are written imperatively by the rAF loop in useFilmStage;
+ *  the `0.00` / `--:--` / `--` values are only placeholders until it runs. */
 export function StatusBar() {
   const dim = 'rgba(236,230,218,.8)'
   return (
@@ -39,14 +38,14 @@ export function StatusBar() {
           <span id="scrub" style={{ color: 'rgba(236,230,218,.85)' }}>
             00:00
           </span>{' '}
-          / <span id="dur">01:00</span>
+          / <span id="dur">--:--</span>
         </div>
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
           <span>
             <span id="idx-cur" style={{ color: 'rgba(236,230,218,.85)' }}>
               00
             </span>{' '}
-            / <span id="idx-tot">06</span>
+            / <span id="idx-tot">--</span>
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--live)' }}>
             <span
@@ -63,7 +62,6 @@ export function StatusBar() {
         </div>
       </div>
 
-      {/* scroll-progress line */}
       <div
         aria-hidden="true"
         style={{

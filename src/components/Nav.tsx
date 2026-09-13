@@ -1,6 +1,5 @@
 import { NAV_LINKS } from '../data'
 
-/** Fixed top navigation. */
 export function Nav() {
   return (
     <header
@@ -10,8 +9,8 @@ export function Nav() {
         left: 0,
         right: 0,
         zIndex: 100,
-        // 3 equal-flanked columns → the middle menu is truly centred on the
-        // viewport regardless of the logo / AW·26 widths.
+        // flanked 1fr columns keep the middle menu centred on the viewport
+        // regardless of the logo / AW·26 widths
         display: 'grid',
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',

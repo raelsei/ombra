@@ -2,7 +2,6 @@ interface Props {
   hidden: boolean
 }
 
-/** Full-screen loader — "OMBRA / Summoning the figure". Fades out on ready. */
 export function Loader({ hidden }: Props) {
   return (
     <div

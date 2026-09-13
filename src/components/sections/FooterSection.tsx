@@ -17,7 +17,6 @@ const fadeRise = (delay: string) =>
     transitionDelay: delay,
   }) as const
 
-/** 05 · FOOTER — enquiries + maison nav, a wordmark signature, and a legal bar. */
 export function FooterSection() {
   return (
     <section
@@ -32,7 +31,6 @@ export function FooterSection() {
         background: 'linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.9) 42%)',
       }}
     >
-      {/* enquiries */}
       <div
         style={{ maxWidth: '1300px', margin: '0 auto', width: '100%' }}
       >
@@ -64,7 +62,6 @@ export function FooterSection() {
         </div>
       </div>
 
-      {/* wordmark signature */}
       <div style={{ maxWidth: '1300px', margin: '0 auto', width: '100%', textAlign: 'center' }}>
         <div style={{ overflow: 'hidden', paddingBottom: '0.06em' }}>
           <h2
@@ -88,7 +85,6 @@ export function FooterSection() {
         </div>
       </div>
 
-      {/* nav + legal bar */}
       <div
         style={{
           maxWidth: '1300px',

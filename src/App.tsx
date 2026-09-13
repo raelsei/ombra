@@ -14,8 +14,6 @@ import { Lookbook } from './components/sections/Lookbook'
 import { House } from './components/sections/House'
 import { FooterSection } from './components/sections/FooterSection'
 
-/* Config — spec defaults, overridable via URL query for review:
-   ?motion=drift  ?accent=#C9A227  ?grain=0  ?fig=0  ?speed=0.7 */
 const ACCENTS = ['#A9B4C0', '#C9A227', '#B4472E', '#8E97A6', '#E3DCCB']
 
 function readConfig() {
@@ -40,11 +38,9 @@ export default function App() {
   const glowRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // style config → CSS vars
   useEffect(() => {
     const r = document.documentElement.style
     r.setProperty('--live', cfg.accent)
-    r.setProperty('--instr', cfg.showFigureData ? '1' : '0')
     r.setProperty('--grain', cfg.grain ? '1' : '0')
   }, [cfg])
 
@@ -59,7 +55,6 @@ export default function App() {
     onReady: () => setReady(true),
   })
 
-  // reveals play once the loader clears (or immediately for reduced motion)
   useReveals(rootRef, ready || reduced)
 
   return (
