@@ -1,3 +1,25 @@
+export const HERO: {
+  eyebrow: string
+  /** mask-rise headline, one entry per reveal step */
+  lines: [string, string]
+  meta: string[]
+  /** glyph rendered between the meta items */
+  metaSeparator: string
+  scrollCue: string
+} = {
+  eyebrow: 'Maison OMBRA · Antwerp / Paris',
+  lines: ['The Shape', 'Remains'],
+  meta: ['Autumn·Winter 2026', 'Collection 01', 'Edition of Few'],
+  metaSeparator: '·',
+  scrollCue: 'Scroll',
+}
+
+export const APPARITION: { eyebrow: string; heading: string; statement: string } = {
+  eyebrow: 'Statement',
+  heading: 'Silhouette',
+  statement: 'Garments cut for the shape a figure leaves in a room once it has gone. Worn by no one, seen by all.',
+}
+
 export interface CollectionItem {
   id: string
   index: string

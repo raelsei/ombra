@@ -1,3 +1,5 @@
+import { HERO } from '../../data'
+
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
 const maskLine = (delay: string, color?: string) => ({
@@ -62,7 +64,7 @@ export function Hero() {
           }}
         >
           <span style={{ width: '26px', height: '1px', background: 'var(--live)', display: 'inline-block' }} />
-          Maison OMBRA · Antwerp / Paris
+          {HERO.eyebrow}
         </div>
 
         <h1
@@ -78,12 +80,12 @@ export function Hero() {
         >
           <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.14em', marginBottom: '-0.14em' }}>
             <span data-reveal="" style={maskLine('0s')}>
-              The Shape
+              {HERO.lines[0]}
             </span>
           </span>
           <span style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.14em', marginBottom: '-0.14em' }}>
             <span data-reveal="" style={maskLine('.09s', 'rgba(236,230,218,.55)')}>
-              Remains
+              {HERO.lines[1]}
             </span>
           </span>
         </h1>
@@ -106,11 +108,11 @@ export function Hero() {
             color: 'rgba(236,230,218,.55)',
           }}
         >
-          <span>Autumn·Winter 2026</span>
-          <span style={{ color: 'rgba(236,230,218,.3)' }}>·</span>
-          <span>Collection 01</span>
-          <span style={{ color: 'rgba(236,230,218,.3)' }}>·</span>
-          <span>Edition of Few</span>
+          <span>{HERO.meta[0]}</span>
+          <span style={{ color: 'rgba(236,230,218,.3)' }}>{HERO.metaSeparator}</span>
+          <span>{HERO.meta[1]}</span>
+          <span style={{ color: 'rgba(236,230,218,.3)' }}>{HERO.metaSeparator}</span>
+          <span>{HERO.meta[2]}</span>
         </div>
       </div>
 
@@ -132,7 +134,7 @@ export function Hero() {
           color: 'rgba(236,230,218,.5)',
         }}
       >
-        <span>Scroll</span>
+        <span>{HERO.scrollCue}</span>
         <span style={{ width: '1px', height: '44px', background: 'linear-gradient(180deg, var(--live), transparent)' }} />
       </div>
     </section>

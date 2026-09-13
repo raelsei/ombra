@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    name: Lint, type-check & build
+    name: Lint, test, type-check & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +29,8 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+
+      - run: npm test
 
       # `npm run build` = `tsc -b && vite build`, so this is the type-check too.
       - run: npm run build

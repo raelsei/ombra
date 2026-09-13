@@ -1,3 +1,5 @@
+import { APPARITION } from '../../data'
+
 const EASE = 'cubic-bezier(.16,.84,.3,1)'
 
 export function Apparition() {
@@ -38,7 +40,7 @@ export function Apparition() {
             alignSelf: 'flex-start',
           }}
         >
-          Statement
+          {APPARITION.eyebrow}
         </div>
 
         <div style={{ overflow: 'hidden', alignSelf: 'stretch' }}>
@@ -58,7 +60,7 @@ export function Apparition() {
               mixBlendMode: 'difference',
             }}
           >
-            Silhouette
+            {APPARITION.heading}
           </h2>
         </div>
 
@@ -78,7 +80,7 @@ export function Apparition() {
             color: 'rgba(236,230,218,.6)',
           }}
         >
-          Garments cut for the shape a figure leaves in a room once it has gone. Worn by no one, seen by all.
+          {APPARITION.statement}
         </p>
       </div>
     </section>
