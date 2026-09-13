@@ -9,7 +9,7 @@ move fast, dissolving before the collection arrives.
 
 [**→ Live site**](https://koray.dev/ombra/)
 
-[![Deploy](https://github.com/raelsei/ombra/actions/workflows/deploy.yml/badge.svg)](https://github.com/raelsei/ombra/actions/workflows/deploy.yml)
+[![Build &amp; Deploy](https://github.com/raelsei/ombra/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/raelsei/ombra/actions/workflows/deploy.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-000000.svg)](LICENSE)
 ![React 19](https://img.shields.io/badge/react-19-000000?logo=react)
 ![TypeScript](https://img.shields.io/badge/typescript-strict-000000?logo=typescript)
