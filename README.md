@@ -7,7 +7,7 @@ black-and-white film of a walking figure lives in the page's negative space —
 scrubbed frame-by-frame by your scroll, smearing into ghosts of itself when you
 move fast, dissolving before the collection arrives.
 
-[**→ Live site**](https://raelsei.github.io/ombra/)
+[**→ Live site**](https://koray.dev/ombra/)
 
 [![Deploy](https://github.com/raelsei/ombra/actions/workflows/deploy.yml/badge.svg)](https://github.com/raelsei/ombra/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-000000.svg)](LICENSE)
@@ -214,9 +214,13 @@ ids, aspect ratios and the shared visual rule are documented in
 type-checks and builds on every push and pull request, then publishes `dist/`
 to Pages on `main` — **no manual step per release, every push to `main` ships.**
 
-The one setup action, once per repository: **Settings → Pages → Build and
-deployment → Source: GitHub Actions**. (GitHub does not let a workflow enable
-its own Pages site, so this cannot be automated.)
+One-time setup per repository — point Pages at Actions, either in
+**Settings → Pages → Build and deployment → Source: GitHub Actions**, or once
+from the CLI:
+
+```bash
+gh api -X POST /repos/<owner>/<repo>/pages -f build_type=workflow
+```
 
 Project sites are served from `/<repo>/`, so the workflow passes
 `BASE_PATH=/${{ github.event.repository.name }}/` and `vite.config.ts` reads it.
